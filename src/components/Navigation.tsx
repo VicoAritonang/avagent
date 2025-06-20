@@ -53,7 +53,7 @@ export default function Navigation() {
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
                   <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-                    Avagent
+                    Avagenc
                   </span>
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:space-x-8">

@@ -140,7 +140,7 @@ export default function About() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1.2, ease: "easeOut" }}
             >
-              About Avagent
+              About Avagenc
             </motion.h1>
             <motion.p 
               className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed"

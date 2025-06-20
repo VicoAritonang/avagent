@@ -363,7 +363,7 @@ export default function Contact() {
                           </div>
                           <div>
                             <h3 className="text-lg font-semibold text-gray-900 mb-1">Email</h3>
-                            <p className="text-blue-600 font-medium">contact@avagent.tech</p>
+                            <p className="text-blue-600 font-medium">contact@avagenc.tech</p>
                             <p className="text-sm text-gray-500 mt-1">Best for detailed inquiries</p>
                           </div>
                         </div>

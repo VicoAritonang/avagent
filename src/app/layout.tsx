@@ -6,7 +6,7 @@ import { ThemeProvider } from "next-themes";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Avagent - AI Automation Solutions",
+  title: "Avagenc - AI Automation Solutions",
   description: "Transform your business with intelligent AI agents and automation",
 };
 

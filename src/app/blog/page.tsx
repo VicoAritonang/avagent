@@ -1,89 +1,20 @@
 'use client'
 
+import { useEffect, useState, useRef, useMemo } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useState, useRef, useMemo } from 'react'
 import Navigation from '@/components/Navigation'
+import { supabase } from '@/lib/supabaseClient'
 
-const blogPosts = [
-  {
-    id: 1,
-    title: 'The Future of Agentic AI in Business',
-    excerpt: 'Explore how intelligent AI agents are transforming business operations and decision-making processes across industries.',
-    date: 'March 15, 2024',
-    readTime: '5 min read',
-    category: 'AI Technology',
-    author: 'Dr. Sarah Chen',
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop',
-    featured: true,
-    tags: ['AI', 'Business', 'Innovation']
-  },
-  {
-    id: 2,
-    title: 'Automating Workflows with n8n: A Complete Guide',
-    excerpt: 'Learn how to create efficient automation workflows using n8n and integrate them with your existing systems for maximum productivity.',
-    date: 'March 10, 2024',
-    readTime: '8 min read',
-    category: 'Automation',
-    author: 'Michael Rodriguez',
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=400&fit=crop',
-    featured: false,
-    tags: ['n8n', 'Automation', 'Workflow']
-  },
-  {
-    id: 3,
-    title: 'Building Custom AI Agents: Best Practices',
-    excerpt: 'Discover the key principles and best practices for developing effective custom AI agents that deliver real business value.',
-    date: 'March 5, 2024',
-    readTime: '6 min read',
-    category: 'Development',
-    author: 'Alex Thompson',
-    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&h=400&fit=crop',
-    featured: false,
-    tags: ['AI Agents', 'Development', 'Best Practices']
-  },
-  {
-    id: 4,
-    title: 'Enterprise AI Integration: Success Stories',
-    excerpt: 'Real-world case studies of how enterprises are successfully integrating AI agents into their operations.',
-    date: 'February 28, 2024',
-    readTime: '7 min read',
-    category: 'Case Studies',
-    author: 'Dr. Sarah Chen',
-    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=400&fit=crop',
-    featured: false,
-    tags: ['Enterprise', 'Integration', 'Success Stories']
-  },
-  {
-    id: 5,
-    title: 'The ROI of AI Automation: Measuring Success',
-    excerpt: 'How to calculate and maximize the return on investment from your AI automation initiatives.',
-    date: 'February 20, 2024',
-    readTime: '9 min read',
-    category: 'Business Strategy',
-    author: 'Michael Rodriguez',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop',
-    featured: false,
-    tags: ['ROI', 'Strategy', 'Analytics']
-  },
-  {
-    id: 6,
-    title: 'Security in AI Agent Development',
-    excerpt: 'Essential security considerations when building and deploying AI agents in enterprise environments.',
-    date: 'February 15, 2024',
-    readTime: '6 min read',
-    category: 'Security',
-    author: 'Alex Thompson',
-    image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=400&fit=crop',
-    featured: false,
-    tags: ['Security', 'AI', 'Enterprise']
-  }
-]
+
 
 const categories = ['All', 'AI Technology', 'Automation', 'Development', 'Case Studies', 'Business Strategy', 'Security']
 
 export default function Blog() {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchTerm, setSearchTerm] = useState('')
+  const [blogPosts, setBlogPosts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
   const containerRef = useRef(null)
   
   const { scrollYProgress } = useScroll({
@@ -93,15 +24,40 @@ export default function Blog() {
 
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
 
+  useEffect(() => {
+    const fetchBlogPosts = async () => {
+      setLoading(true)
+      const { data, error } = await supabase
+        .from('blogPosts')
+        .select('*')
+        .order('date', { ascending: false })
+  
+      if (error) {
+        console.error('Error fetching blog posts:', error)
+      } else {
+        setBlogPosts(data || [])
+      }
+  
+      setLoading(false)
+    }
+  
+    fetchBlogPosts()
+  }, [])
+  
   const filteredPosts = useMemo(() => {
     return blogPosts.filter(post => {
-      const matchesCategory = selectedCategory === 'All' || post.category === selectedCategory
-      const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          post.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesCategory =
+        selectedCategory === 'All' ||
+        post.category?.toLowerCase() === selectedCategory.toLowerCase()
+      
+      const matchesSearch =
+        post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.excerpt?.toLowerCase().includes(searchTerm.toLowerCase())
+  
       return matchesCategory && matchesSearch
     })
-  }, [selectedCategory, searchTerm])
-
+  }, [selectedCategory, searchTerm, blogPosts])
+  
   const featuredPost = useMemo(() => {
     return filteredPosts.find(post => post.featured)
   }, [filteredPosts])
@@ -258,7 +214,8 @@ export default function Blog() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-violet-500 rounded-full flex items-center justify-center text-white font-bold">
-                          {featuredPost.author.split(' ').map(n => n[0]).join('')}
+                        {featuredPost?.author?.split(' ').map(n => n[0]).join('')}
+
                         </div>
                         <span className="text-gray-700 font-medium">{featuredPost.author}</span>
                       </div>
