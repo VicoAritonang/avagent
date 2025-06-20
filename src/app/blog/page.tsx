@@ -2,21 +2,33 @@
 
 import { useEffect, useState, useRef, useMemo } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import Image from 'next/image'
 import Navigation from '@/components/Navigation'
 import { supabase } from '@/lib/supabaseClient'
 
-
+// Buat interface untuk menghindari penggunaan `any`
+interface BlogPost {
+  id: string
+  title: string
+  excerpt: string
+  image: string
+  category: string
+  author: string
+  date: string
+  readTime: string
+  tags: string[]
+  featured?: boolean
+}
 
 const categories = ['All', 'AI Technology', 'Automation', 'Development', 'Case Studies', 'Business Strategy', 'Security']
 
 export default function Blog() {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchTerm, setSearchTerm] = useState('')
-  const [blogPosts, setBlogPosts] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]) // ✅ Ganti `any[]` menjadi `BlogPost[]`
 
   const containerRef = useRef(null)
-  
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
@@ -26,23 +38,21 @@ export default function Blog() {
 
   useEffect(() => {
     const fetchBlogPosts = async () => {
-      setLoading(true)
       const { data, error } = await supabase
         .from('blogPosts')
         .select('*')
         .order('date', { ascending: false })
-  
+
       if (error) {
         console.error('Error fetching blog posts:', error)
       } else {
-        setBlogPosts(data || [])
+        setBlogPosts((data ?? []) as BlogPost[])
       }
-  
-      setLoading(false)
     }
-  
+
     fetchBlogPosts()
   }, [])
+
   
   const filteredPosts = useMemo(() => {
     return blogPosts.filter(post => {
@@ -185,10 +195,13 @@ export default function Blog() {
                       whileHover={{ opacity: 1 }}
                       transition={{ duration: 0.3 }}
                     />
-                    <img
+                    <Image
                       src={featuredPost.image}
                       alt={featuredPost.title}
+                      width={600}
+                      height={300}
                       className="w-full h-full object-cover min-h-[300px] group-hover:scale-110 transition-transform duration-700"
+                      priority
                     />
                     <div className="absolute top-4 left-4 z-20">
                       <span className="bg-gradient-to-r from-blue-600 to-violet-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
@@ -268,9 +281,11 @@ export default function Blog() {
                       <motion.div
                         className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                       />
-                      <img
+                      <Image
                         src={post.image}
                         alt={post.title}
+                        width={400}
+                        height={192}
                         className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
                       />
                       <div className="absolute top-4 left-4 z-20">
@@ -378,7 +393,7 @@ export default function Blog() {
                   transition={{ delay: 1.8, duration: 0.8 }}
                   onSubmit={async (e) => {
                     e.preventDefault();
-                    const email = e.target.email.value.trim();
+                    const email = (e.target as HTMLFormElement).email.value.trim();
 
                     // Validasi email sederhana
                     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -398,7 +413,7 @@ export default function Blog() {
 
                       if (res.ok) {
                         alert("Subscription successful!");
-                        e.target.reset(); // clear input
+                        (e.target as HTMLFormElement).reset(); // clear input
                       } else {
                         alert("Failed to subscribe. Please try again.");
                       }
@@ -424,8 +439,6 @@ export default function Blog() {
                     Subscribe
                   </motion.button>
                 </motion.form>
-
-
                 
                 <motion.p 
                   className="text-sm opacity-75 mt-4"

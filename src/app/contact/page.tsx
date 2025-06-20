@@ -180,7 +180,7 @@ export default function Contact() {
                 <SparklesIcon className="w-12 h-12 text-blue-600 mx-auto" />
               </motion.div>
               <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-violet-800 bg-clip-text text-transparent mb-6">
-                Let's Build the Future
+                Let&apos;s Build the Future
               </h1>
               <motion.p
                 initial={{ opacity: 0 }}
@@ -189,7 +189,7 @@ export default function Contact() {
                 className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed"
               >
                 Ready to transform your business with cutting-edge AI agents? 
-                <span className="text-blue-600 font-semibold"> Let's discuss your vision.</span>
+                <span className="text-blue-600 font-semibold"> Let&apos;s discuss your vision.</span>
               </motion.p>
             </motion.div>
           ) : (
@@ -198,7 +198,7 @@ export default function Contact() {
                 Get in Touch
               </h1>
               <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-                Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible
+                Have questions? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible
               </p>
             </div>
           )}

@@ -141,7 +141,7 @@ export default function Services() {
                   Ready to Transform Your Business?
                 </h2>
                 <p className="text-xl text-blue-100 mb-8">
-                  Let's discuss how our AI solutions can help you achieve your goals.
+                  Let&apos;s discuss how our AI solutions can help you achieve your goals.
                 </p>
                 <motion.a
                   href="/contact"
