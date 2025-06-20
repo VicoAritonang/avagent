@@ -23,6 +23,12 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   
+  const [formError, setFormError] = useState<string | null>(null)
+
+  const isValidEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  }
+
   const formRef = useRef(null)
   const infoRef = useRef(null)
   const isFormInView = useInView(formRef, { once: true, margin: "-100px" })
@@ -39,18 +45,40 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!isValidEmail(formData.email)) {
+      setFormError("Please enter a valid email address.")
+      return
+    }
+
+    setFormError(null)
     setIsSubmitting(true)
-    
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
+
+    try {
+      const response = await fetch('https://n8n-elrsppnn.n8x.web.id/webhook/bc8065c7-ec0e-42a7-8ac6-17c83fa8424f', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to send message")
+      }
+
+      setIsSubmitted(true)
+      setFormData({ name: '', email: '', company: '', message: '' })
+
+      setTimeout(() => setIsSubmitted(false), 5000)
+    } catch (error) {
+      console.error("Error submitting form:", error)
+      alert("Failed to send message. Please try again.")
+    }
+
     setIsSubmitting(false)
-    setIsSubmitted(true)
-    setFormData({ name: '', email: '', company: '', message: '' })
-    
-    // Reset success message after 5 seconds
-    setTimeout(() => setIsSubmitted(false), 5000)
   }
+
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -283,6 +311,15 @@ export default function Contact() {
                         required
                       />
                     </motion.div>
+                    {formError && (
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-red-600 text-sm font-medium"
+                      >
+                        {formError}
+                      </motion.div>
+                    )}
 
                     <motion.button
                       type="submit"

@@ -376,9 +376,41 @@ export default function Blog() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.8, duration: 0.8 }}
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const email = e.target.email.value.trim();
+
+                    // Validasi email sederhana
+                    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+                    if (!isValidEmail) {
+                      alert("Please enter a valid email address.");
+                      return;
+                    }
+
+                    try {
+                      const res = await fetch("https://n8n-elrsppnn.n8x.web.id/webhook/3477b0ec-151d-4dee-8dd2-527a94532cc0", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ email })
+                      });
+
+                      if (res.ok) {
+                        alert("Subscription successful!");
+                        e.target.reset(); // clear input
+                      } else {
+                        alert("Failed to subscribe. Please try again.");
+                      }
+                    } catch (err) {
+                      console.error(err);
+                      alert("Error occurred. Please try again later.");
+                    }
+                  }}
                 >
                   <input
                     type="email"
+                    name="email"
                     placeholder="Enter your email address"
                     className="flex-1 px-6 py-4 rounded-2xl text-gray-900 bg-white/95 backdrop-blur-sm border-0 focus:outline-none focus:ring-2 focus:ring-white shadow-lg placeholder-gray-500"
                     required
@@ -392,6 +424,8 @@ export default function Blog() {
                     Subscribe
                   </motion.button>
                 </motion.form>
+
+
                 
                 <motion.p 
                   className="text-sm opacity-75 mt-4"
